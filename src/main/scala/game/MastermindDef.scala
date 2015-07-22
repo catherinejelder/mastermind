@@ -32,15 +32,16 @@ trait MastermindDef {
   val White = new ResultColor("White")
   val Empty = new ResultColor("Empty")
   
-  sealed abstract class ColorList
+//  abstract class ColorList extends List[Color]
   
   // TODO: require that guesses and results are the correct length
 //  class Guess(colors: List[GuessColor]) extends ColorList
 //  val Guess: List[GuessColor]
+//    class Guess(colors: List[GuessColor]) extends ColorList[GuessColor]
   
 //  class Guess(colors: List[GuessColor]) extends ColorList  
 //  class Result(colors: List[ResultColor]) extends ColorList
-  
+//    class Result extends List[ResultColor]
 //  class MasterLists(guess: Guess, master: Guess)
   
   case class MasterLists(guess: List[GuessColor], master: List[GuessColor]) 
@@ -95,6 +96,7 @@ trait MastermindDef {
   def isCorrect(guess: List[GuessColor], master: List[GuessColor]): Boolean =
     countFullMatches(guess, master) == master.length
     
-//  private def getResult(guess: List[GuessColor], master: List[GuessColor]): List[ResultColor] =
-
+//  def getResult(guess: List[GuessColor], master: List[GuessColor]): List[ResultColor] =
+    
+    
 }

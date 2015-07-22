@@ -109,4 +109,8 @@ class MastermindSuite extends FunSuite {
         assert(isCorrect(guess, master) == false)
       }
     }
+    
+//    test("5a: guesses and results") {
+//      assert(Guess())
+//    }
 }
