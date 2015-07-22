@@ -9,48 +9,15 @@ import scala.math.Ordering
  */
 trait MastermindDef {
   
-//  object Color extends Enumeration {
-//    type Color = Value
-//    val Blue = Value("Blue")
-//    val Green = Value("Green")
-//    val Orange = Value("Orange")
-//    val Purple = Value("Purple")
-//    val Red = Value("Red")
-//    val Yellow = Value("Yellow")
-//   
-//    val Black = Value("Black")
-//    val White = Value("White")    
-//  }
-  
-//  sealed abstract class Color extends Ordered[Color] {
-//      def compare(that: Color): Int = this.toString.compareTo(that.toString)
-////    def compare(that: Color): Int = this.toString compare that.toString
-//  }
-  
-//    abstract class Color extends Enumeration {
-//      type Color = Value
-//      def compare(that: Color): Int = this.toString.compareTo(that.toString)
-//  }
    abstract case class Color(color:String) extends Ordering[Color]{
 //      def compare(that: Color): Int = this.color.compareTo(that.color)
       def compare(x: Color, y: Color): Int = x.color.compareTo(y.color)     
    }
-    // was abstract
-   class GuessColor(color:String) extends Color(color) {
-      override def compare(x: Color, y: Color): Int = x.color.compareTo(y.color)     
 
-//    type GuessColor = Value
-//    val Blue, Green, Orange, Purple, Red, Yellow = Value
-     
-//    val Blue = Value
-//    val Green = Value("Green")
-//    val Orange = Value("Orange")
-//    val Purple = Value("Purple")
-//    val Red = Value("Red")
-//    val Yellow = Value("Yellow")
+   class GuessColor(color:String) extends Color(color) {
+      override def compare(x: Color, y: Color): Int = x.color.compareTo(y.color)
   }
-  
-//  object GuessColors extends GuessColor
+   
   val Blue = new GuessColor("Blue")
   val Green = new GuessColor("Green")
   val Orange = new GuessColor("Orange")
@@ -59,32 +26,11 @@ trait MastermindDef {
   val Yellow = new GuessColor("Yellow")
 
   sealed class ResultColor(color:String) extends Color(color) {
-//    val Black, White, Empty = Value
-    
-//    val Black = Value("Black")
-//    val White = Value("White")
-//    val Empty = Value("Empty")
+
   }
-  
-//  case object Blue extends GuessColor
-//  case object Green extends GuessColor
-//  case object Orange extends GuessColor
-//  case object Purple extends GuessColor
-//  case object Red extends GuessColor
-//  case object Yellow extends GuessColor
-//  
-//  case object Black extends ResultColor  // correct color, correct position
-//  case object White extends ResultColor  // correct color, wrong position
-//  case object Empty extends ResultColor  // wrong color, wrong position
-//  
-//  val guess1 = List(Blue, Blue, Green, Orange)
-//  val master1 = List(Blue, Blue, Orange, Purple)
-//  val test1 = countFullMatches(guess1, master1)
-//  
-  
-//  sealed abstract class Ball
-//  class GuessBall(c: GuessColor) extends Ball
-//  class ResultBall(c: ResultColor) extends Ball
+  val Black = new ResultColor("Black")
+  val White = new ResultColor("White")
+  val Empty = new ResultColor("Empty")
   
   sealed abstract class ColorList
   
@@ -99,14 +45,6 @@ trait MastermindDef {
   
   case class MasterLists(guess: List[GuessColor], master: List[GuessColor]) 
   
-  // a guess is correct if all balls in result are black
-//  @tailrec
-//  private def correct(colors: List[ResultColor]): Boolean =
-//    colors match {
-//    case Nil => true
-//    case hd :: tl => if (hd.equals(Black)) correct(tl) else false
-//  }
-
   private def colorsMatch(b1: GuessColor, b2: GuessColor): Boolean = b1.equals(b2)
   
   // accept a guess. return a sub list of only the colors that do not have a full match.
@@ -123,11 +61,6 @@ trait MastermindDef {
       case false => removeFullMatchesAcc(tl_guess, master.tail, hd_guess :: acc)
     }
   }
-//    if (colorsMatch(guess.head, master.head)) 
-//      removeFullMatchesAcc(guess.tail, master.tail, acc)
-//    else
-//      removeFullMatchesAcc(guess.tail, master.tail, guess.head :: acc) // TODO: maintain ordering by appending to end of list
-  
   
   // accept a guess (full matches already removed). return a sub list of only the colors that do not have a partial match.
   def removePartialMatches(guess: List[GuessColor], master: List[GuessColor]) = {
