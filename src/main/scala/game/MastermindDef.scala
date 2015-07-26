@@ -3,6 +3,7 @@ package main.scala.game
 import scala.annotation.tailrec
 import scala.math.Ordered.orderingToOrdered
 import scala.math.Ordering
+import scala.util.Random;
 /**
  * @author celder
  * Define the interface for the mastermind game
@@ -25,6 +26,8 @@ trait MastermindDef {
   val Red = new GuessColor("Red")
   val Yellow = new GuessColor("Yellow")
 
+  // TODO: let user set number of colors
+  
   sealed class ResultColor(color:String) extends Color(color) {
 
   }
@@ -97,6 +100,31 @@ trait MastermindDef {
     countFullMatches(guess, master) == master.length
     
 //  def getResult(guess: List[GuessColor], master: List[GuessColor]): List[ResultColor] =
+  val GUESS_COLORS = List(Blue, Green, Orange, Purple, Red, Yellow)
+  
+  def getColorList(numColors: Int): List[GuessColor] = GUESS_COLORS.take(numColors)
+    
+  // generate result list of the specified length and number of colors
+  def generateResult(len: Int, numColors: Int): List[GuessColor] = {
+    val rand = new Random()
+    val colorList = getColorList(numColors)
+//    println("colorList: " + colorList)
+    @tailrec
+    def generateResultAcc(length: Int, acc: List[GuessColor]): List[GuessColor] = {
+//      println("generateResultAcc called with length: " + length + ", acc: " + acc)
+      length match {
+      case 0 => acc
+      case _ => generateResultAcc(length - 1, colorList(rand.nextInt(numColors)) :: acc)
+      }
+    }
+    numColors match {
+      case 0 => List()
+      case _ => generateResultAcc(len, List())
+    }
+  }
+
+    
+
     
     
 }

@@ -110,7 +110,33 @@ class MastermindSuite extends FunSuite {
       }
     }
     
-//    test("5a: guesses and results") {
-//      assert(Guess())
-//    }
+    trait Move5a extends MastermindDef {
+      def testGenerateResult(len: Int, numColors: Int): Unit = {
+        val result = generateResult(len, numColors)
+        println("result of size " + len + " with " + numColors + " possible colors: " + result)
+        // ensure size of result is correct
+        if (numColors != 0) {
+          assert(result.length === len)
+          if (len != 0) {
+            assert((result.toSet & getColorList(len).toSet).size >= 1)
+            assert((result.toSet & GUESS_COLORS.drop(numColors).toSet).size === 0)        
+          }
+        } else {
+          assert(result.length === 0)
+        }       
+      }    
+    }
+    
+    test("5a: generate results") {
+      new Move5a {
+        testGenerateResult(0, 5)
+        testGenerateResult(3, 1)
+        testGenerateResult(2, 2)
+        testGenerateResult(5, 1)
+        testGenerateResult(5, 2)
+        testGenerateResult(4, 6)
+        testGenerateResult(8, 6)
+        }
+    }
+
 }
