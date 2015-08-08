@@ -12,9 +12,9 @@ class MastermindSuite extends FunSuite {
       
     // all full matches
      trait Move1a extends MastermindDef {
-      val guess = List(Orange, Orange, Orange, Orange)
+      val guess = List(Magenta, Magenta, Magenta, Magenta)
       val guessWithoutFullMatches = List()
-      val master = List(Orange, Orange, Orange, Orange)
+      val master = List(Magenta, Magenta, Magenta, Magenta)
     }
     
     test("1a: all full matches") {
@@ -29,14 +29,14 @@ class MastermindSuite extends FunSuite {
     
     // all partial matches
     trait Move2a extends MastermindDef {
-      val guess = List(Orange, Orange, Blue, Green)
+      val guess = List(Magenta, Magenta, Blue, Green)
       val guessWithoutFullMatches = guess
-      val master = List(Blue, Green, Orange, Orange)
+      val master = List(Blue, Green, Magenta, Magenta)
     }
     
     test("2a: all partial matches") {
       new Move2a {
-        assert(removeFullMatches(guess, master) === List(Orange, Orange, Blue, Green).reverse) // TODO: sort lists!
+        assert(removeFullMatches(guess, master) === List(Magenta, Magenta, Blue, Green).reverse) // TODO: sort lists!
         assert(countFullMatches(guess, master) === 0)
         assert(removePartialMatches(guessWithoutFullMatches, master) === List())
         assert(countPartialMatches(guess, master) === 4)
@@ -62,14 +62,14 @@ class MastermindSuite extends FunSuite {
     
     //some full matches, some partial
     trait Move3a extends MastermindDef {
-      val guess = List(Blue, Blue, Green, Orange)
-      val guessWithoutFullMatches = List(Green, Orange)
-      val master = List(Blue, Blue, Orange, Purple)
+      val guess = List(Blue, Blue, Green, Magenta)
+      val guessWithoutFullMatches = List(Green, Magenta)
+      val master = List(Blue, Blue, Magenta, Cyan)
     }
     
     test("3a: some full matches, some partial") {
       new Move3a {
-        assert(removeFullMatches(guess, master) === List(Green, Orange).reverse) // TODO: sort lists!
+        assert(removeFullMatches(guess, master) === List(Green, Magenta).reverse) // TODO: sort lists!
         assert(countFullMatches(guess, master) === 2)
         assert(removePartialMatches(guessWithoutFullMatches, master) === List(Green))
         assert(countPartialMatches(guess, master) === 1)
@@ -78,14 +78,14 @@ class MastermindSuite extends FunSuite {
     }
     
     trait Move3b extends MastermindDef {
-      val guess = List(Blue, Yellow, Purple, Red)
-      val guessWithoutFullMatches = List(Blue, Purple)
-      val master = List(Purple, Yellow, Orange, Red)
+      val guess = List(Blue, Yellow, Cyan, Red)
+      val guessWithoutFullMatches = List(Blue, Cyan)
+      val master = List(Cyan, Yellow, Magenta, Red)
     }
     
     test("3b: some full matches, some partial") {
       new Move3b {
-        assert(removeFullMatches(guess, master) === List(Blue, Purple).reverse) // TODO: sort lists!
+        assert(removeFullMatches(guess, master) === List(Blue, Cyan).reverse) // TODO: sort lists!
         assert(countFullMatches(guess, master) === 2)
         assert(removePartialMatches(guessWithoutFullMatches, master) === List(Blue))
         assert(countPartialMatches(guess, master) === 1)
@@ -95,16 +95,16 @@ class MastermindSuite extends FunSuite {
     
     // no matches
     trait Move4a extends MastermindDef {
-      val guess = List(Blue, Blue, Green, Orange)
-      val guessWithoutFullMatches = List(Blue, Blue, Green, Orange)
-      val master = List(Red, Purple, Purple, Yellow)
+      val guess = List(Blue, Blue, Green, Magenta)
+      val guessWithoutFullMatches = List(Blue, Blue, Green, Magenta)
+      val master = List(Red, Cyan, Cyan, Yellow)
     }
     
     test("4a: no matches") {
       new Move4a {
-        assert(removeFullMatches(guess, master) === List(Blue, Blue, Green, Orange).reverse) // TODO: sort lists!
+        assert(removeFullMatches(guess, master) === List(Blue, Blue, Green, Magenta).reverse) // TODO: sort lists!
         assert(countFullMatches(guess, master) === 0)
-        assert(removePartialMatches(guessWithoutFullMatches, master) === List(Blue, Blue, Green, Orange).reverse)
+        assert(removePartialMatches(guessWithoutFullMatches, master) === List(Blue, Blue, Green, Magenta).reverse)
         assert(countPartialMatches(guess, master) === 0)
         assert(isCorrect(guess, master) == false)
       }
@@ -113,12 +113,13 @@ class MastermindSuite extends FunSuite {
     trait Move5a extends MastermindDef {
       def testGenerateResult(len: Int, numColors: Int): Unit = {
         val result = generateResult(len, numColors)
-        println("result of size " + len + " with " + numColors + " possible colors: " + result)
+        val colorList = getPotentialColorList(numColors)
+        println("result of size " + len + " with " + numColors + " possible colors: " + result + ". \n Using potential color list:" + colorList)
         // ensure size of result is correct
         if (numColors != 0) {
           assert(result.length === len)
           if (len != 0) {
-            assert((result.toSet & getColorList(len).toSet).size >= 1)
+            assert((result.toSet & colorList.toSet).size >= 1)
             assert((result.toSet & GUESS_COLORS.drop(numColors).toSet).size === 0)        
           }
         } else {
@@ -136,6 +137,22 @@ class MastermindSuite extends FunSuite {
         testGenerateResult(5, 2)
         testGenerateResult(4, 6)
         testGenerateResult(8, 6)
+        val asciiNum = 79
+        val aChar = asciiNum.toChar
+        Console.out.println("Test " + " " + Console.RED + aChar + " " + Console.BLUE + aChar + " " + Console.YELLOW + aChar + " " 
+            + Console.GREEN + aChar + " " + Console.CYAN + aChar + " " + Console.MAGENTA + aChar
+            + Console.WHITE + " |" + Console.BOLD + Console.BLACK + " " + aChar + Console.WHITE + " " + aChar
+            + Console.RESET)
+        
+
+//        val num = readLine("enter an int> ")
+//         Console.out.println(num)  
+//         
+//        Console.out.println( "Test " + Console.BLUE + aChar)
+//        Console.out.println( "Test " + Console.YELLOW + aChar)
+//        Console.out.println( "Test " + Console.GREEN + aChar)
+//        Console.out.println( "Test " + Console.Cyan + aChar)
+//        Console.out.println( "Test " + Console.Magenta + aChar + Console.RESET)
         }
     }
 

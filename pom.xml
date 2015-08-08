@@ -4,8 +4,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.stackoverflow</groupId>
-    <artifactId>Q13036561</artifactId>
+    <groupId>game</groupId>
+    <artifactId>mastermind</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <name>${project.artifactId}-${project.version}</name>
@@ -78,6 +78,14 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+			    <groupId>org.codehaus.mojo</groupId>
+			    <artifactId>exec-maven-plugin</artifactId>
+			    <version>1.1</version>
+			    <configuration>
+			      <mainClass>main.scala.game.Main</mainClass>
+			    </configuration>
+  			</plugin>
         </plugins>
     </build>
 </project>
