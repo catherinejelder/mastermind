@@ -1,19 +1,44 @@
 package main.scala.game
 
 import scala.io.Source
+import java.lang.Integer
 import main.scala.game.MastermindDef
 
 object Main {
   def main(args: Array[String]) {
         Console.println("Welcome to mastermind!")
-        println("the best game")
-//        val name = readLine("How many colors do you want to use? ")
         print("How many colors do you want to use? ")
-        val numColors = readInt()
+//        val numColors = readInt()
+        val numColorsLine = readLine()
+        var numColors = 6
+        try {
+          val numC = Integer.parseInt(numColorsLine)
+          if (numC > numColors) {
+            print("I only know " + numColors + " colors, let's go with that :)\n")
+          } else {
+            numColors = numC
+          }
+        } catch {
+          case e: NumberFormatException => print("Hmm, I don't recognize that number. Let's use " + numColors + " colors.\n")
+        }
+         
         print("How many spots do you want to guess? ")
-        val len = readInt()
+        val lenLine = readLine()
+        var len = 4
+        try {
+          len = Integer.parseInt(lenLine)
+        } catch {
+          case e: NumberFormatException => print("Hmm, I don't recognize that number. Let's use " + len + " spots.\n")
+        }
+        
         print("How many guesses do you want? ")
-        val numGuesses = readInt()
+        val numGuessesLine = readLine()
+        var numGuesses = 8
+        try {
+          numGuesses = Integer.parseInt(numGuessesLine)
+        } catch {
+          case e: NumberFormatException => print("Hmm, I don't recognize that number. Let's give you " + numGuesses + " guesses.\n")
+        }
         
         println("starting game with " + numColors + " colors, " + len + " spots, " + numGuesses + " guesses")
         
@@ -49,19 +74,14 @@ object Main {
         var feedback = ""
         
         do {
-          val guessStr = readLine("guess: ")
-//        println("your guess: " + guessStr)
-          
+          val guessStr = readLine("guess: ")          
           guess = game.getColorList(guessStr)
           val master = game.master
-          feedback = game.getFeedback(guess)
-          
-//        println("your guess in colors: " + guess)
+          feedback = game.getFeedback(guess)  
           println("master: " + master)
           println("feedback so far, " + game.getNumberOfGuessesSoFar() + " guesses: \n" + feedback)
         } while (!game.isOver(guess))
-        
-        // game's over, how did we do?
+
         if (game.isCorrect(guess)) {
           println("you won!! \n")          
         } else {
