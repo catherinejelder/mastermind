@@ -17,9 +17,18 @@ class MastermindSuite extends FunSuite {
       val master = List(Magenta, Magenta, Magenta, Magenta)
     }
     
+//    test("1a: all full matches") {
+//      new Move1a {      
+//        assert(removeFullMatches(guess, master) === List()) // TODO: sort lists!
+//        assert(countFullMatches(guess, master) === 4)
+//        assert(removePartialMatches(guessWithoutFullMatches, master) === List())
+//        assert(countPartialMatches(guess, master) === 0)
+//        assert(isCorrect(guess, master) == true)
+//      }
+//    }
     test("1a: all full matches") {
       new Move1a {      
-        assert(removeFullMatches(guess, master) === List()) // TODO: sort lists!
+        assert(removeFullMatches(guess, master) === (Nil, Nil))
         assert(countFullMatches(guess, master) === 4)
         assert(removePartialMatches(guessWithoutFullMatches, master) === List())
         assert(countPartialMatches(guess, master) === 0)
@@ -36,7 +45,7 @@ class MastermindSuite extends FunSuite {
     
     test("2a: all partial matches") {
       new Move2a {
-        assert(removeFullMatches(guess, master) === List(Magenta, Magenta, Blue, Green).reverse) // TODO: sort lists!
+        assert(removeFullMatches(guess, master) === (List(Magenta, Magenta, Blue, Green), master))
         assert(countFullMatches(guess, master) === 0)
         assert(removePartialMatches(guessWithoutFullMatches, master) === List())
         assert(countPartialMatches(guess, master) === 4)
@@ -52,7 +61,7 @@ class MastermindSuite extends FunSuite {
     
     test("2b: all partial matches") {
       new Move2b {
-        assert(removeFullMatches(guess, master) === List(Blue, Green, Blue, Green).reverse) // TODO: sort lists!
+        assert(removeFullMatches(guess, master) === (List(Blue, Green, Blue, Green), master))
         assert(countFullMatches(guess, master) === 0)
         assert(removePartialMatches(guessWithoutFullMatches, master) === List())
         assert(countPartialMatches(guess, master) === 4)
@@ -69,7 +78,7 @@ class MastermindSuite extends FunSuite {
     
     test("3a: some full matches, some partial") {
       new Move3a {
-        assert(removeFullMatches(guess, master) === List(Green, Magenta).reverse) // TODO: sort lists!
+        assert(removeFullMatches(guess, master) === (List(Green, Magenta), List(Magenta, Cyan)))
         assert(countFullMatches(guess, master) === 2)
         assert(removePartialMatches(guessWithoutFullMatches, master) === List(Green))
         assert(countPartialMatches(guess, master) === 1)
@@ -85,8 +94,24 @@ class MastermindSuite extends FunSuite {
     
     test("3b: some full matches, some partial") {
       new Move3b {
-        assert(removeFullMatches(guess, master) === List(Blue, Cyan).reverse) // TODO: sort lists!
+        assert(removeFullMatches(guess, master) === (List(Blue, Cyan), List(Cyan, Magenta)))
         assert(countFullMatches(guess, master) === 2)
+        assert(removePartialMatches(guessWithoutFullMatches, master) === List(Blue))
+        assert(countPartialMatches(guess, master) === 1)
+        assert(isCorrect(guess, master) == false)
+      }
+    }
+
+    trait Move3c extends MastermindDef {
+      val guess = List(Blue, Blue, Blue, Magenta)
+      val guessWithoutFullMatches = List(Blue, Blue, Magenta)
+      val master = List(Blue, Red, Magenta, Red)
+    }
+    
+    test("3c: some full matches, some partial") {
+      new Move3c {
+        assert(removeFullMatches(guess, master) === (List(Blue, Blue, Magenta), List(Red, Magenta, Red)))
+        assert(countFullMatches(guess, master) === 1)
         assert(removePartialMatches(guessWithoutFullMatches, master) === List(Blue))
         assert(countPartialMatches(guess, master) === 1)
         assert(isCorrect(guess, master) == false)
@@ -102,9 +127,9 @@ class MastermindSuite extends FunSuite {
     
     test("4a: no matches") {
       new Move4a {
-        assert(removeFullMatches(guess, master) === List(Blue, Blue, Green, Magenta).reverse) // TODO: sort lists!
+        assert(removeFullMatches(guess, master) === (List(Blue, Blue, Green, Magenta), master))
         assert(countFullMatches(guess, master) === 0)
-        assert(removePartialMatches(guessWithoutFullMatches, master) === List(Blue, Blue, Green, Magenta).reverse)
+        assert(removePartialMatches(guessWithoutFullMatches, master) === List(Blue, Blue, Green, Magenta))
         assert(countPartialMatches(guess, master) === 0)
         assert(isCorrect(guess, master) == false)
       }

@@ -15,17 +15,11 @@ trait MastermindDef {
    abstract case class Color(color:String) extends Ordering[Color]{
 //      def compare(that: Color): Int = this.color.compareTo(that.color)
       def compare(x: Color, y: Color): Int = x.color.compareTo(y.color) 
-//      def getColor() = color
    }
 
    class GuessColor(color:String) extends Color(color) {
       override def compare(x: Color, y: Color): Int = x.color.compareTo(y.color)
   }
-  
-//  val length
-//  val setLength(len: Int): Unit() = {length = len}
-//  val numColors
-//  val setNumColors(num: Int): Unit() = {numColors = num}
   
   val Blue = new GuessColor("Blue")
   val Cyan = new GuessColor("Cyan")
@@ -34,26 +28,12 @@ trait MastermindDef {
   val Red = new GuessColor("Red")
   val Yellow = new GuessColor("Yellow")
   
-  // TODO: let user set number of colors
-  
-  sealed class ResultColor(color:String) extends Color(color) {
-
-  }
+  sealed class ResultColor(color:String) extends Color(color) {}
   val Black = new ResultColor("Black")
   val White = new ResultColor("White")
   val Empty = new ResultColor("Empty")
   
-//  abstract class ColorList extends List[Color]
-  
-  // TODO: require that guesses and results are the correct length
-//  class Guess(colors: List[GuessColor]) extends ColorList
-//  val Guess: List[GuessColor]
-//    class Guess(colors: List[GuessColor]) extends ColorList[GuessColor]
-  
-//  class Guess(colors: List[GuessColor]) extends ColorList  
-//  class Result(colors: List[ResultColor]) extends ColorList
-//    class Result extends List[ResultColor]
-//  class MasterLists(guess: Guess, master: Guess)
+  class GuessAndMaster(guess: List[GuessColor], master: List[GuessColor])
   
   case class MasterLists(guess: List[GuessColor], master: List[GuessColor]) 
   
@@ -61,50 +41,102 @@ trait MastermindDef {
   
   // accept a guess. return a sub list of only the colors that do not have a full match.
   // TODO: fix this so that it returns a different guess as well as different master
-  def removeFullMatches(guess: List[GuessColor], master: List[GuessColor]): List[GuessColor] = {
-    removeFullMatchesAcc(guess, master, Nil)
-  }
+//  def removeFullMatches(guess: List[GuessColor], master: List[GuessColor]): List[GuessColor] = {
+//    @tailrec
+//    private def removeFullMatchesAcc(guess: List[GuessColor], master: List[GuessColor], acc: List[GuessColor]): List[GuessColor] = 
+//      guess match {
+//      case Nil => acc
+//      case hd_guess :: tl_guess => colorsMatch(hd_guess, master.head) match {
+//        case true => removeFullMatchesAcc(tl_guess, master.tail, acc)
+//        case false => removeFullMatchesAcc(tl_guess, master.tail, hd_guess :: acc)
+//      }
+//    }
+//    removeFullMatchesAcc(guess, master, Nil)
+//  }
     
+//   def removeFullMatches(guess: List[GuessColor], master: List[GuessColor]): GuessAndMaster = {
+//    removeFullMatchesAcc(new GuessAndMaster(guess, master), new GuessAndMaster(Nil, Nil))
+//   } 
+   def removeFullMatches(guess: List[GuessColor], master: List[GuessColor]): (List[GuessColor], List[GuessColor]) = {
+    val res: (List[GuessColor], List[GuessColor]) = removeFullMatchesAcc((guess, master), (Nil, Nil))
+    (res._1.reverse, res._2.reverse)
+   }
+  
   @tailrec
-  private def removeFullMatchesAcc(guess: List[GuessColor], master: List[GuessColor], acc: List[GuessColor]): List[GuessColor] = 
-    guess match {
-    case Nil => acc
-    case hd_guess :: tl_guess => colorsMatch(hd_guess, master.head) match {
-      case true => removeFullMatchesAcc(tl_guess, master.tail, acc)
-      case false => removeFullMatchesAcc(tl_guess, master.tail, hd_guess :: acc)
+  private def removeFullMatchesAcc(data: (List[GuessColor], List[GuessColor]), acc: (List[GuessColor], List[GuessColor])): (List[GuessColor], List[GuessColor]) = {
+    data._1 match {
+      case Nil => acc
+      case hd_guess :: tl_guess => colorsMatch(hd_guess, data._2.head) match {
+        case true => removeFullMatchesAcc((tl_guess, data._2.tail), acc)
+        case false => removeFullMatchesAcc((tl_guess, data._2.tail), (hd_guess :: acc._1, data._2.head :: acc._2))
+        }
     }
   }
   
-  // accept a guess (full matches already removed). return a sub list of only the colors that do not have a partial match.
-  def removePartialMatches(guess: List[GuessColor], master: List[GuessColor]) = {
-      removePartialMatchesAcc(guess, Nil, master, Nil)
+//  @tailrec
+//  private def removeFullMatchesAcc(guess: List[GuessColor], master: List[GuessColor], acc: List[GuessColor]): List[GuessColor] = 
+//    guess match {
+//    case Nil => acc
+//    case hd_guess :: tl_guess => colorsMatch(hd_guess, master.head) match {
+//      case true => removeFullMatchesAcc(tl_guess, master.tail, acc)
+//      case false => removeFullMatchesAcc(tl_guess, master.tail, hd_guess :: acc)
+//    }
+//  }
+  
+  
+  // accept a guess (full matches already removed). return a sub list of only the colors that do not have a partial match. 
+  def removePartialMatches(guess: List[GuessColor], master: List[GuessColor]): List[GuessColor] = {
+      removePartialMatchesAcc(guess, Nil, master, Nil).reverse
     }
 
-  @tailrec
-  private def removePartialMatchesAcc(guess: List[GuessColor], guessAcc: List[GuessColor], master: List[GuessColor], masterAcc: List[GuessColor]): List[GuessColor] =
-//    println("removePartialMatchesAcc called with guess:" + guess + ", guessAcc: " + guessAcc + ", master: " + master + ", masterAcc: " + masterAcc)
-    guess match {
-    case Nil => guessAcc
-    case hd_guess :: tl_guess => master match {
-      case Nil => removePartialMatchesAcc(tl_guess, hd_guess :: guessAcc, masterAcc, Nil)
-      case hd_master :: tl_master => colorsMatch(hd_guess, hd_master) match {
-        case true => removePartialMatchesAcc(tl_guess, guessAcc, masterAcc ::: tl_master, Nil)
-        case false => removePartialMatchesAcc(guess, guessAcc, tl_master, hd_master :: masterAcc)
+          @tailrec
+        private def removePartialMatchesAcc(guess: List[GuessColor], guessAcc: List[GuessColor], master: List[GuessColor], masterAcc: List[GuessColor]): List[GuessColor] = {
+          guess match {
+          case Nil => guessAcc
+          case hd_guess :: tl_guess => master match {
+            case Nil => removePartialMatchesAcc(tl_guess, hd_guess :: guessAcc, masterAcc, Nil)
+            case hd_master :: tl_master => colorsMatch(hd_guess, hd_master) match {
+              case true => removePartialMatchesAcc(tl_guess, guessAcc, masterAcc ::: tl_master, Nil)
+              case false => removePartialMatchesAcc(guess, guessAcc, tl_master, hd_master :: masterAcc)
+            }
+          }
+        }
       }
-    }
-  }
+          
+//  @tailrec
+//  private def removePartialMatchesAcc(guess: List[GuessColor], guessAcc: List[GuessColor], master: List[GuessColor], masterAcc: List[GuessColor]): List[GuessColor] =
+//    guess match {
+//    case Nil => guessAcc
+//    case hd_guess :: tl_guess => master match {
+//      case Nil => removePartialMatchesAcc(tl_guess, hd_guess :: guessAcc, masterAcc, Nil)
+//      case hd_master :: tl_master => colorsMatch(hd_guess, hd_master) match {
+//        case true => removePartialMatchesAcc(tl_guess, guessAcc, masterAcc ::: tl_master, Nil)
+//        case false => removePartialMatchesAcc(guess, guessAcc, tl_master, hd_master :: masterAcc)
+//      }
+//    }
+//  }
   
+//  def countFullMatches(guess: List[GuessColor], master: List[GuessColor]): Int = 
+//    guess.length - removeFullMatches(guess, master).length
   def countFullMatches(guess: List[GuessColor], master: List[GuessColor]): Int = 
-    guess.length - removeFullMatches(guess, master).length
-   
-  // call on any guess
-  def countPartialMatches(guess: List[GuessColor], master: List[GuessColor]): Int =
-    countPartialMatchesUnsafe(removeFullMatches(guess, master), master)
+    guess.length - removeFullMatches(guess, master)._1.length 
     
-  // call only on guesses that already have full matches removed
+  // call on any guess
+  def countPartialMatches(guess: List[GuessColor], master: List[GuessColor]): Int = {
+    val safeData: (List[GuessColor], List[GuessColor]) = removeFullMatches(guess, master)
+    countPartialMatchesUnsafe(safeData._1, safeData._2)    
+  }
+
+//  def countPartialMatches(guess: List[GuessColor], master: List[GuessColor]): Int =
+//    countPartialMatchesUnsafe(removeFullMatches(new GuessAndMaster(guess, master)))
+    
+    // call only on guesses that already have full matches removed
   def countPartialMatchesUnsafe(guess: List[GuessColor], master: List[GuessColor]): Int =
     guess.length - removePartialMatches(guess, master).length
-  
+//  def countPartialMatchesUnsafe(data: GuessAndMaster): Int =
+//    data.guess.length - removePartialMatches(data).guess.length
+    
+    
   def isCorrect(guess: List[GuessColor], master: List[GuessColor]): Boolean =
     countFullMatches(guess, master) == master.length
     
@@ -132,16 +164,12 @@ trait MastermindDef {
     }
   }
   
-    // generate result list of the specified length and number of colors
-//  val master(numColors, length): List[GuessColor] = generateMaster(numColors, length) 
-  
+// generate result list of the specified length and number of colors  
   def generateMaster(numColors: Int, length: Int): List[GuessColor] = { // TODO: only call once!
     val rand = new Random()
     val colorList = getPotentialColorList(numColors)
-//    println("colorList: " + colorList)
     @tailrec
     def generateMasterAcc(length: Int, acc: List[GuessColor]): List[GuessColor] = {
-//      println("generateResultAcc called with length: " + length + ", acc: " + acc)
       length match {
       case 0 => acc
       case _ => generateMasterAcc(length - 1, colorList(rand.nextInt(numColors)) :: acc)
@@ -180,13 +208,6 @@ trait MastermindDef {
       case _ => names.split(" ").toList
     }
   }
-   
-//  def getGuessFeedbackAcc(guess: List[GuessColor], acc: String): String = {
-//    guess match {
-//      case Nil => acc
-//      case g :: rest => 
-//    }
-//  }
   
   def getConsoleStrForColor(c: Color): String = {
     val asciiNum = 79

@@ -12,23 +12,26 @@ object Main {
         val numColors = readInt()
         print("How many spots do you want to guess? ")
         val len = readInt()
+        print("How many guesses do you want? ")
+        val numGuesses = readInt()
         
-        println("starting game with " + numColors + " colors and " + len + " spots")
+        println("starting game with " + numColors + " colors, " + len + " spots, " + numGuesses + " guesses")
         
-        class MastermindGame(numC: Int, len: Int) extends MastermindDef {
+        class MastermindGame(numC: Int, len: Int, numG: Int) extends MastermindDef {
           val length: Int = len
           val numColors: Int = numC
+          val numGuesses: Int = numG
           
           val master = generateMaster(numColors, length)
           
-          var feedbackCumulative: String = ""
+          var feedbackSoFar: String = ""
           
-          def getNumberOfGuesses(): Int = feedbackCumulative.filter(_ == '\n').length
+          def getNumberOfGuessesSoFar(): Int = feedbackSoFar.filter(_ == '\n').length
           
           def getFeedback(guess: List[GuessColor]): String = {
             val feedback = getFeedbackForGuess(guess)
-            feedbackCumulative = feedback + "\n" + feedbackCumulative
-            feedbackCumulative
+            feedbackSoFar = feedback + "\n" + feedbackSoFar
+            feedbackSoFar
           }
           
           def getFeedbackForGuess(guess: List[GuessColor]): String = {
@@ -36,26 +39,33 @@ object Main {
           }
           
           def isCorrect(guess: List[GuessColor]): Boolean = isCorrect(guess, master)
+          private def isLost(): Boolean = getNumberOfGuessesSoFar() >= numGuesses
+          def isOver(guess: List[GuessColor]): Boolean = isCorrect(guess) || isLost()
         }
         
-        val game = new MastermindGame(numColors, len)
+        val game = new MastermindGame(numColors, len, numGuesses)
  
         var guess = game.getColorList("")
         var feedback = ""
         
         do {
           val guessStr = readLine("guess: ")
-//          println("your guess: " + guessStr)
+//        println("your guess: " + guessStr)
           
           guess = game.getColorList(guessStr)
           val master = game.master
           feedback = game.getFeedback(guess)
           
-//          println("your guess in colors: " + guess)
+//        println("your guess in colors: " + guess)
           println("master: " + master)
-          println("feedback so far, " + game.getNumberOfGuesses() + " guesses: \n" + feedback)
-        } while (!game.isCorrect(guess))
+          println("feedback so far, " + game.getNumberOfGuessesSoFar() + " guesses: \n" + feedback)
+        } while (!game.isOver(guess))
         
-        println("you won!! \n" + feedback)
+        // game's over, how did we do?
+        if (game.isCorrect(guess)) {
+          println("you won!! \n")          
+        } else {
+          println("you lost after " + game.getNumberOfGuessesSoFar() + " guesses :(")
+        }
   }
 }
