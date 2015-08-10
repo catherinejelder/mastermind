@@ -1,2 +1,6 @@
 # ignore target dir
 target/
+.cache
+.cache-main
+.classpath
+.project
