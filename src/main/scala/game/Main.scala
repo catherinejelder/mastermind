@@ -2,13 +2,31 @@ package main.scala.game
 
 import scala.io.Source
 import java.lang.Integer
-import main.scala.game.MastermindDef
+import main.scala.game._
+//import main.scala.game.MastermindGame.GuessColor
+//import main.scala.game.MastermindGame.UnknownColorException
+//import main.scala.game.MastermindGame.IncompleteColorListException
+
+/**
+ * @author catherinejelder
+ * Provides a UI for playing the mastermind game
+ */
 
 object Main {
   def main(args: Array[String]) {
-        Console.println("Welcome to mastermind!")
+        println("\nWelcome to mastermind!")
+        println("Guess the colors of a secret row of dots to win!")
+        
+        print("How many dots do you want to guess? ")
+        val lenLine = readLine()
+        var len = 4
+        try {
+          len = Integer.parseInt(lenLine)
+        } catch {
+          case e: NumberFormatException => print("Hmm, I don't recognize that number. Let's use " + len + " dots.\n")
+        }
+        
         print("How many colors do you want to use? ")
-//        val numColors = readInt()
         val numColorsLine = readLine()
         var numColors = 6
         try {
@@ -21,15 +39,6 @@ object Main {
         } catch {
           case e: NumberFormatException => print("Hmm, I don't recognize that number. Let's use " + numColors + " colors.\n")
         }
-         
-        print("How many spots do you want to guess? ")
-        val lenLine = readLine()
-        var len = 4
-        try {
-          len = Integer.parseInt(lenLine)
-        } catch {
-          case e: NumberFormatException => print("Hmm, I don't recognize that number. Let's use " + len + " spots.\n")
-        }
         
         print("How many guesses do you want? ")
         val numGuessesLine = readLine()
@@ -40,52 +49,64 @@ object Main {
           case e: NumberFormatException => print("Hmm, I don't recognize that number. Let's give you " + numGuesses + " guesses.\n")
         }
         
-        println("starting game with " + numColors + " colors, " + len + " spots, " + numGuesses + " guesses")
-        
-        class MastermindGame(numC: Int, len: Int, numG: Int) extends MastermindDef {
-          val length: Int = len
-          val numColors: Int = numC
-          val numGuesses: Int = numG
-          
-          val master = generateMaster(numColors, length)
-          
-          var feedbackSoFar: String = ""
-          
-          def getNumberOfGuessesSoFar(): Int = feedbackSoFar.filter(_ == '\n').length
-          
-          def getFeedback(guess: List[GuessColor]): String = {
-            val feedback = getFeedbackForGuess(guess)
-            feedbackSoFar = feedback + "\n" + feedbackSoFar
-            feedbackSoFar
-          }
-          
-          def getFeedbackForGuess(guess: List[GuessColor]): String = {
-            guess.map(c => getConsoleStrForColor(c)).foldLeft("")(_ + _) + " |" + getFeedbackColors(guess, master).map(c => getConsoleStrForColor(c)).foldLeft("")(_ + _)
-          }
-          
-          def isCorrect(guess: List[GuessColor]): Boolean = isCorrect(guess, master)
-          private def isLost(): Boolean = getNumberOfGuessesSoFar() >= numGuesses
-          def isOver(guess: List[GuessColor]): Boolean = isCorrect(guess) || isLost()
-        }
+        println("starting game with " + numColors + " colors, " + len + " dots, " + numGuesses + " guesses")
+        println("Guess the colors of a secret list of " + len + " dots to win!")
         
         val game = new MastermindGame(numColors, len, numGuesses)
- 
-        var guess = game.getColorList("")
+        
+        print("dots you can use: \n" + "color\tname\tnickname\n"+ game.getPotentialColorList().map(c => game.getConsoleStrForColor(c) + "\t" + c.color.toLowerCase() + "\t" + c.color.take(1).toLowerCase() + "\n").foldLeft("")(_ + _))
+        println("to guess, enter the name or nickname of each dot, separated by spaces")
+        val example = game.getExampleGuess()
+        println("for example, a guess of " + example.map(c => c.color.take(1).toLowerCase()).foldLeft("")(_ + _ + " ") + "means" + example.map(c => game.getConsoleStrForColor(c)).foldLeft("")(_ + _))
+        
+//        var guess = game.getColorList("")
+//        var guess = game.getEmptyColorList()
+
+        def getGuessFromUser(): List[game.GuessColor] = {
+          var guess = game.getEmptyColorList()
+          var acceptableGuess = false
+          do {
+            val guessStr = readLine("guess: ") 
+            
+            try {
+              guess = game.getColorList(guessStr)
+              acceptableGuess = true
+            } catch {
+              case game.UnknownColorException(color) => println("Hmm, I don't recognize the color " + color)
+              case game.IncompleteColorListException(length) => println("Hmm, we need a guess of " + len + " dots, not " + length)
+            }
+          } while (!acceptableGuess)
+          guess
+        }
+        
         var feedback = ""
+        var firstGuess = true
+        var guess = game.getEmptyColorList() 
         
         do {
-          val guessStr = readLine("guess: ")          
-          guess = game.getColorList(guessStr)
-          val master = game.master
+//           var guess = game.getEmptyColorList()
+           guess = getGuessFromUser()
+//          val master = game.master
           feedback = game.getFeedback(guess)  
-          println("master: " + master)
-          println("feedback so far, " + game.getNumberOfGuessesSoFar() + " guesses: \n" + feedback)
+//          println("master: " + master)
+          
+          var guessLabel = "guesses"
+          if (firstGuess) {
+            guessLabel = "guess"
+          }
+          println("feedback so far, " + game.getNumberOfGuessesSoFar() + " " + guessLabel + ": \n" + feedback)
+          
+          if (firstGuess) {
+            println("in the feedback, a black dot means that one of your dots is the right color in the right position. A white dot means that one of your dots is the right color in the wrong position.")  
+          }
+          firstGuess = false
         } while (!game.isOver(guess))
 
         if (game.isCorrect(guess)) {
           println("you won!! \n")          
         } else {
           println("you lost after " + game.getNumberOfGuessesSoFar() + " guesses :(")
+          println("the solution was: " + game.master.map(c => game.getConsoleStrForColor(c)).foldLeft("")(_ + _))
         }
   }
 }

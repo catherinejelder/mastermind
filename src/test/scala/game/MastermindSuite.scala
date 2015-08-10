@@ -17,15 +17,6 @@ class MastermindSuite extends FunSuite {
       val master = List(Magenta, Magenta, Magenta, Magenta)
     }
     
-//    test("1a: all full matches") {
-//      new Move1a {      
-//        assert(removeFullMatches(guess, master) === List()) // TODO: sort lists!
-//        assert(countFullMatches(guess, master) === 4)
-//        assert(removePartialMatches(guessWithoutFullMatches, master) === List())
-//        assert(countPartialMatches(guess, master) === 0)
-//        assert(isCorrect(guess, master) == true)
-//      }
-//    }
     test("1a: all full matches") {
       new Move1a {      
         assert(removeFullMatches(guess, master) === (Nil, Nil))
@@ -168,16 +159,6 @@ class MastermindSuite extends FunSuite {
             + Console.GREEN + aChar + " " + Console.CYAN + aChar + " " + Console.MAGENTA + aChar
             + Console.WHITE + " |" + Console.BOLD + Console.BLACK + " " + aChar + Console.WHITE + " " + aChar
             + Console.RESET)
-        
-
-//        val num = readLine("enter an int> ")
-//         Console.out.println(num)  
-//         
-//        Console.out.println( "Test " + Console.BLUE + aChar)
-//        Console.out.println( "Test " + Console.YELLOW + aChar)
-//        Console.out.println( "Test " + Console.GREEN + aChar)
-//        Console.out.println( "Test " + Console.Cyan + aChar)
-//        Console.out.println( "Test " + Console.Magenta + aChar + Console.RESET)
         }
     }
 
