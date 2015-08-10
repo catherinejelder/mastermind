@@ -10,6 +10,7 @@ Compile the game.
 mvn package
 ```
 You should see "all tests passed", in green, near the end of the console output.
+
 Start the game
 ```bash
 mvn exec:java
