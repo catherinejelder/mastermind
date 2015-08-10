@@ -1,8 +1,10 @@
 # Mastermind
-A scala implmentation of the mastermind game!
+A CLI implementation of the mastermind game, written in scala!
 
 # Prerequisites
 You must have java, scala, and maven installed.
+
+The game looks best in a terminal with a black background.
 
 # Getting Started
 Compile the game.
