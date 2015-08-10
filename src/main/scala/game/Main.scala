@@ -2,10 +2,7 @@ package main.scala.game
 
 import scala.io.Source
 import java.lang.Integer
-import main.scala.game._
-//import main.scala.game.MastermindGame.GuessColor
-//import main.scala.game.MastermindGame.UnknownColorException
-//import main.scala.game.MastermindGame.IncompleteColorListException
+//import main.scala.game._
 
 /**
  * @author catherinejelder
@@ -14,19 +11,19 @@ import main.scala.game._
 
 object Main {
   def main(args: Array[String]) {
-        println("\nWelcome to mastermind!")
-        println("Guess the colors of a secret row of dots to win!")
+        println("\nwelcome to mastermind!")
+        println("guess the colors of a secret row of dots to win!")
         
-        print("How many dots do you want to guess? ")
+        print("how many dots do you want to guess? ")
         val lenLine = readLine()
         var len = 4
         try {
           len = Integer.parseInt(lenLine)
         } catch {
-          case e: NumberFormatException => print("Hmm, I don't recognize that number. Let's use " + len + " dots.\n")
+          case e: NumberFormatException => print("hmm, I don't recognize that number. Let's use " + len + " dots.\n")
         }
         
-        print("How many colors do you want to use? ")
+        print("how many colors do you want to use? ")
         val numColorsLine = readLine()
         var numColors = 6
         try {
@@ -37,10 +34,10 @@ object Main {
             numColors = numC
           }
         } catch {
-          case e: NumberFormatException => print("Hmm, I don't recognize that number. Let's use " + numColors + " colors.\n")
+          case e: NumberFormatException => print("hmm, I don't recognize that number. Let's use " + numColors + " colors.\n")
         }
         
-        print("How many guesses do you want? ")
+        print("how many guesses do you want? ")
         val numGuessesLine = readLine()
         var numGuesses = 8
         try {
@@ -49,21 +46,19 @@ object Main {
           case e: NumberFormatException => print("Hmm, I don't recognize that number. Let's give you " + numGuesses + " guesses.\n")
         }
         
-        println("starting game with " + numColors + " colors, " + len + " dots, " + numGuesses + " guesses")
-        println("Guess the colors of a secret list of " + len + " dots to win!")
+        println("starting game with " + numColors + " colors, " + len + " dots, " + numGuesses + " guesses\n")
+        println("guess the colors of a secret list of " + len + " dots to win!")
         
         val game = new MastermindGame(numColors, len, numGuesses)
         
+        // TODO: take lower level functionality like this into another class
         print("dots you can use: \n" + "color\tname\tnickname\n"+ game.getPotentialColorList().map(c => game.getConsoleStrForColor(c) + "\t" + c.color.toLowerCase() + "\t" + c.color.take(1).toLowerCase() + "\n").foldLeft("")(_ + _))
         println("to guess, enter the name or nickname of each dot, separated by spaces")
         val example = game.getExampleGuess()
         println("for example, a guess of " + example.map(c => c.color.take(1).toLowerCase()).foldLeft("")(_ + _ + " ") + "means" + example.map(c => game.getConsoleStrForColor(c)).foldLeft("")(_ + _))
         
-//        var guess = game.getColorList("")
-//        var guess = game.getEmptyColorList()
-
         def getGuessFromUser(): List[game.GuessColor] = {
-          var guess = game.getEmptyColorList()
+          var guess: List[game.GuessColor] = Nil
           var acceptableGuess = false
           do {
             val guessStr = readLine("guess: ") 
@@ -72,8 +67,8 @@ object Main {
               guess = game.getColorList(guessStr)
               acceptableGuess = true
             } catch {
-              case game.UnknownColorException(color) => println("Hmm, I don't recognize the color " + color)
-              case game.IncompleteColorListException(length) => println("Hmm, we need a guess of " + len + " dots, not " + length)
+              case game.UnknownColorException(color) => println("hmm, I don't recognize the color " + color)
+              case game.IncompleteColorListException(length) => println("hmm, we need a guess of " + len + " dots, not " + length)
             }
           } while (!acceptableGuess)
           guess
@@ -81,14 +76,11 @@ object Main {
         
         var feedback = ""
         var firstGuess = true
-        var guess = game.getEmptyColorList() 
+        var guess: List[game.GuessColor] = Nil
         
         do {
-//           var guess = game.getEmptyColorList()
            guess = getGuessFromUser()
-//          val master = game.master
           feedback = game.getFeedback(guess)  
-//          println("master: " + master)
           
           var guessLabel = "guesses"
           if (firstGuess) {
@@ -97,7 +89,7 @@ object Main {
           println("feedback so far, " + game.getNumberOfGuessesSoFar() + " " + guessLabel + ": \n" + feedback)
           
           if (firstGuess) {
-            println("in the feedback, a black dot means that one of your dots is the right color in the right position. A white dot means that one of your dots is the right color in the wrong position.")  
+            println("in the feedback, a black dot means that one of your dots is the right color in the right position. A white dot means that one of your dots is the right color in the wrong position.\n")  
           }
           firstGuess = false
         } while (!game.isOver(guess))

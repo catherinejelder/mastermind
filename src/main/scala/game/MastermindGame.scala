@@ -5,15 +5,11 @@ package main.scala.game
  * Provides an API for interacting with the mastermind game
  */
 
-class MastermindGame(numC: Int, len: Int, numG: Int) extends MastermindDef {
-  val length: Int = len
-  val numColors: Int = numC
-  val numGuesses: Int = numG
-  
+class MastermindGame(numColors: Int, length: Int, numGuesses: Int) extends MastermindDef {
+
   val master = generateMaster(numColors, length)
   
   var feedbackSoFar: String = ""
-  
   def getNumberOfGuessesSoFar(): Int = feedbackSoFar.filter(_ == '\n').length
   
   def getFeedback(guess: List[GuessColor]): String = {

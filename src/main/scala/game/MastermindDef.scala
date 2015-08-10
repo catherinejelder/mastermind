@@ -12,13 +12,8 @@ import scala.util.control.Exception._
  */
 trait MastermindDef {
   
-   abstract case class Color(color:String) extends Ordering[Color]{
-      def compare(x: Color, y: Color): Int = x.color.compareTo(y.color) 
-   }
-
-   class GuessColor(color:String) extends Color(color) {
-      override def compare(x: Color, y: Color): Int = x.color.compareTo(y.color)
-  }
+  abstract case class Color(color:String){}
+  class GuessColor(color:String) extends Color(color) {}
   
   val Blue = new GuessColor("Blue")
   val Cyan = new GuessColor("Cyan")
@@ -29,7 +24,7 @@ trait MastermindDef {
   
   val GUESS_COLORS = List(Blue, Cyan, Green, Magenta, Red, Yellow)
   
-  class ResultColor(color:String) extends Color(color) {}
+  class ResultColor(color:String) extends Color(color) {}  
   val Black = new ResultColor("Black")
   val White = new ResultColor("White")
   val Empty = new ResultColor("Empty")
@@ -45,6 +40,8 @@ trait MastermindDef {
     (res._1.reverse, res._2.reverse)
    }
   
+  // TODO: turn helper functions into nested functions
+  // TOOD: create a class for the commonly used type List[GuessColor]
   @tailrec
   private def removeFullMatchesAcc(data: (List[GuessColor], List[GuessColor]), acc: (List[GuessColor], List[GuessColor])): (List[GuessColor], List[GuessColor]) = {
     data._1 match {
@@ -75,22 +72,26 @@ trait MastermindDef {
     }
   }
   
+  // count the number of full matches in a guess (correct color, correct position)
   def countFullMatches(guess: List[GuessColor], master: List[GuessColor]): Int = 
     guess.length - removeFullMatches(guess, master)._1.length 
-    
+
+  // count the number of partial matches in a guess (correct color, wrong position)
   // call on any guess
   def countPartialMatches(guess: List[GuessColor], master: List[GuessColor]): Int = {
     val safeData: (List[GuessColor], List[GuessColor]) = removeFullMatches(guess, master)
     countPartialMatchesUnsafe(safeData._1, safeData._2)    
   }
 
-    // call only on guesses that already have full matches removed
+  // call only on guesses that already have full matches removed
   def countPartialMatchesUnsafe(guess: List[GuessColor], master: List[GuessColor]): Int =
     guess.length - removePartialMatches(guess, master).length
 
+  // return true if the guess is correct (all full matches)
   def isCorrect(guess: List[GuessColor], master: List[GuessColor]): Boolean =
     countFullMatches(guess, master) == master.length
-      
+  
+  // list of colors we are allowed to use in this iteration of the game
   def getPotentialColorList(numColors: Int): List[GuessColor] = GUESS_COLORS.take(numColors)
     
   // generate result list of the specified length and number of colors
@@ -124,6 +125,8 @@ trait MastermindDef {
     generateMasterAcc(length, List())
   }
 
+  // get color for color name
+  // big TODO: refuse to accept colors that don't exist in this iteration of the game (eg. yellow if we're only using 3 colors)
   @throws(classOf[UnknownColorException])
   def getColor(name: String): GuessColor = {
     name.take(1).toLowerCase() match {
@@ -137,6 +140,7 @@ trait MastermindDef {
     }
   }
   
+  // turn a user-defined string into a list of colors
   @throws(classOf[IncompleteColorListException])
   def getColorList(names: String, len: Int): List[GuessColor] = {
     var colorList: List[GuessColor] = names.split(" ").toList.map(c => getColor(c))
@@ -145,16 +149,8 @@ trait MastermindDef {
     }
     colorList
   }
-  def getEmptyColorList(): List[GuessColor] = Nil // TODO: this is a hack, rewrite it
-    
-  // TODO: check length of names
-//  def cleanColorNames(names: String): List[String] = {
-//    names match {
-//      case "" => Nil
-//      case _ => names.split(" ").toList
-//    }
-//  }
   
+  // get pretty string to represent a color
   def getConsoleStrForColor(c: Color): String = {
     val asciiNum = 79
     val aChar = asciiNum.toChar
@@ -172,6 +168,7 @@ trait MastermindDef {
       }
   }
   
+  // get result colors for a guess
   def getFeedbackColors(guess: List[GuessColor], master: List[GuessColor]): List[ResultColor] = {
     val fullMatches = countFullMatches(guess, master)
     val partialMatches = countPartialMatches(guess, master)
