@@ -8,10 +8,11 @@ object TestGame {
   
   val game = new MastermindGame(4, 4, 8)          //> game  : main.scala.game.MastermindGame = main.scala.game.MastermindGame@1e67
                                                   //| b872
-  val example = game.getExampleGuess()            //> example  : List[TestGame.game.GuessColor] = List(Color(Cyan), Color(Cyan), C
-                                                  //| olor(Blue), Color(Blue))
-  val master = game.master                        //> master  : List[TestGame.game.GuessColor] = List(Color(Green), Color(Green), 
-                                                  //| Color(Blue), Color(Cyan))
+  val example = game.getExampleGuess()            //> example  : List[TestGame.game.GuessColor] = List(Color(Magenta), Color(Magen
+                                                  //| ta), Color(Cyan), Color(Magenta))
+  val master = game.master                        //> master  : List[TestGame.game.GuessColor] = List(Color(Green), Color(Magenta)
+                                                  //| , Color(Green), Color(Blue))
   game.countFullMatches(example, master)          //> res0: Int = 1
+  game.countPartialMatches(example, master)       //> res1: Int = 0
   
 }
