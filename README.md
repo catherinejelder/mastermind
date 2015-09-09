@@ -1,11 +1,20 @@
 # Mastermind
-a scala implmentation of the mastermind game!
+A CLI implementation of the mastermind game, written in scala!
 
 # Prerequisites
-you must have java, scala, and maven installed
+You must have scala and maven installed.
+
+The game looks best in a terminal with a black background.
 
 # Getting Started
-Clone this repo and cd into it
-Package the game with "mvn package". You should see "all tests passed", in green, near the end of the console output.
-Start the game with "mvn exec:java"
+Compile the game.
+```bash
+mvn package
+```
+You should see "all tests passed", in green, near the end of the console output.
+
+Start the game.
+```bash
+mvn exec:java
+```
 Follow the console instructions to play!
