@@ -6,6 +6,8 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 import main.scala.game.MastermindDef
+//import main.scala.game.MastermindDef.UnknownColorException
+import main.scala.game.MastermindGame
 
 @RunWith(classOf[JUnitRunner])
 class MastermindSuite extends FunSuite {
@@ -160,6 +162,25 @@ class MastermindSuite extends FunSuite {
             + Console.WHITE + " |" + Console.BOLD + Console.BLACK + " " + aChar + Console.WHITE + " " + aChar
             + Console.RESET)
         }
+    }
+
+    // no matches
+    test("6a: disallowed colors") {
+      new MastermindDef {
+        intercept[Exception] {
+          getColor("yellow", 3)
+        }
+      }
+    }
+    
+    test("6b: allowed colors") {
+      new MastermindDef {
+        try {
+          getColor("green", 3)
+        } catch {
+          case _ : Throwable => fail("green should be allowed")
+        }        
+      }
     }
 
 }

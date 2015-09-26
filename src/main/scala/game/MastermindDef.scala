@@ -126,24 +126,22 @@ trait MastermindDef {
   }
 
   // get color for color name
-  // big TODO: refuse to accept colors that don't exist in this iteration of the game (eg. yellow if we're only using 3 colors)
   @throws(classOf[UnknownColorException])
-  def getColor(name: String): GuessColor = {
-    name.take(1).toLowerCase() match {
-      case "b" => Blue
-      case "c" => Cyan
-      case "g" => Green
-      case "m" => Magenta
-      case "r" => Red
-      case "y" => Yellow
-      case _ => throw new UnknownColorException(name)
+  def getColor(name: String, numColors: Int): GuessColor = {
+    val potentialColorList = getPotentialColorList(numColors)
+    val index = potentialColorList.map(c => c.color.take(1).toLowerCase()).indexOf(name.take(1).toLowerCase()) // TODO: check more than the first character of the color name
+    index match {
+      case -1 => throw new UnknownColorException(name)
+      case _ => {
+        potentialColorList.lift(index).get
+      }
     }
   }
   
   // turn a user-defined string into a list of colors
   @throws(classOf[IncompleteColorListException])
-  def getColorList(names: String, len: Int): List[GuessColor] = {
-    var colorList: List[GuessColor] = names.split(" ").toList.map(c => getColor(c))
+  def getColorList(names: String, len: Int, numColors: Int): List[GuessColor] = {
+    var colorList: List[GuessColor] = names.split(" ").toList.map(c => getColor(c, numColors))
     if (colorList.length != len) {
       throw new IncompleteColorListException(colorList.length.toString) 
     }

@@ -22,7 +22,7 @@ class MastermindGame(numColors: Int, length: Int, numGuesses: Int) extends Maste
     guess.map(c => getConsoleStrForColor(c)).foldLeft("")(_ + _) + " |" + getFeedbackColors(guess, master).map(c => getConsoleStrForColor(c)).foldLeft("")(_ + _)
   }
   
-  def getColorList(names: String): List[GuessColor] = getColorList(names, length)
+  def getColorList(names: String): List[GuessColor] = getColorList(names, length, numColors)
   
   def getPotentialColorList(): List[GuessColor] = getPotentialColorList(numColors)
   def getExampleGuess(): List[GuessColor] = generateMaster(numColors, length)
