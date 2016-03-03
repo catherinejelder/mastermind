@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/catherinejelder/mastermind.svg?branch=master)](https://travis-ci.org/catherinejelder/mastermind)
+
 # Mastermind
 A CLI implementation of the mastermind game, written in scala!
 
